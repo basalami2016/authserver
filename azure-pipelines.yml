@@ -2,6 +2,7 @@
 # Build your Java project and run tests with Apache Maven.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
+#steps: [ task | script | powershell | pwsh | bash | checkout | download | downloadBuild | getPackage | publish | template | reviewApp ] # Required. A list of steps to run in this job.
 
 trigger:
 - master
@@ -13,21 +14,42 @@ pool:
   name: Default
   demands:
    - agent.name -equals NiQFlexAgent001 
-   
-- task: JavaToolInstaller@0
-    inputs:
-      versionSpec: "17"
-      jdkArchitectureOption: x64
-      jdkSourceOption: PreInstalled
-      
-steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+
+stages:
+- stage: "Start CI"
+  jobs:
+  - job: "Start CI Work"
+    steps:
+    - script: "Do CI work"
+    - script: echo This runs in the default shell on any machine
+    - bash: |
+        echo This multiline script always runs in Bash.
+        echo Even on Windows machines!  
+        
+- stage: "Install JDK"
+  jobs:
+  - job: "Install JDK Work"
+    steps:
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: "17"
+        jdkArchitectureOption: "x64"
+        jdkSourceOption: PreInstalled
+        
+- stage: "Run Maven Build"
+  jobs:
+  - job: "Run Maven Build Work"
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'
+        #javaHomeOption: 'JDKVersion'
+        #jdkVersionOption: '1.8'  
+        #jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        goals: 'package'
+                   
+        
+        
