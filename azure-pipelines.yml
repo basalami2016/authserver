@@ -13,7 +13,13 @@ pool:
   name: Default
   demands:
    - agent.name -equals NiQFlexAgent001 
-
+   
+- task: JavaToolInstaller@0
+    inputs:
+      versionSpec: "17"
+      jdkArchitectureOption: x64
+      jdkSourceOption: PreInstalled
+      
 steps:
 - task: Maven@3
   inputs:
