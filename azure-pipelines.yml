@@ -21,9 +21,9 @@ stages:
   - job: StartCIWork
     steps:   
     - script: echo This runs in the default shell on any machine
-    - bash: |
-        echo This multiline script always runs in Bash.
-        echo Even on Windows machines!  
+    #- bash: |
+        #echo This multiline script always runs in Bash.
+        #echo Even on Windows machines!  
         
 - stage: InstallJDK
   jobs:
