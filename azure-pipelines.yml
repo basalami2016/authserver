@@ -6,8 +6,13 @@
 trigger:
 - master
 
+#pool:
+  #vmImage: ubuntu-latest
+  
 pool:
-  vmImage: ubuntu-latest
+  name: Default
+  demands:
+   - agent.name -equals NiQFlexAgent001 
 
 steps:
 - task: Maven@3
