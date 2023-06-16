@@ -1,0 +1,16 @@
+---
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google-idp:
+            provider: google
+            client-id: 368313030711-mt62v227r6b5usrf2llko0rdabdq5kls.apps.googleusercontent.com
+            client-secret: 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
+            scope: openid, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email
+            client-name: Sign in with Google
+        provider:
+          google:
+            user-name-attribute: email
+---
