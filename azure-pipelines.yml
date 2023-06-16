@@ -31,9 +31,13 @@ stages:
     steps:
     - task: JavaToolInstaller@0
       inputs:
-        versionSpec: "17"
-        jdkArchitectureOption: "x64"
-        jdkSourceOption: PreInstalled
+        versionSpec: '17'
+        jdkArchitectureOption: 'x64'
+        #jdkSourceOption: PreInstalled
+        jdkSourceOption: 'LocalDirectory'
+        jdkFile: 'C:\2023AzureDevOpsAgentJDK17\jdk17.zip' #amazon-corretto-17.0.7.7.1-windows-x64-jdk.zip
+        jdkDestinationDirectory: 'C:\2023AzureDevOpsAgentJDK17Install'
+        cleanDestinationDirectory: true
         
 - stage: RunMavenBuild
   jobs:
