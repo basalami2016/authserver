@@ -16,9 +16,9 @@ pool:
    - agent.name -equals NiQFlexAgent001 
 
 stages:
-- stage: "Start CI"
+- stage: StartCI
   jobs:
-  - job: "Start CI Work"
+  - job: StartCIWork
     steps:
     - script: "Do CI work"
     - script: echo This runs in the default shell on any machine
@@ -26,9 +26,9 @@ stages:
         echo This multiline script always runs in Bash.
         echo Even on Windows machines!  
         
-- stage: "Install JDK"
+- stage: InstallJDK
   jobs:
-  - job: "Install JDK Work"
+  - job: InstallJDKWork
     steps:
     - task: JavaToolInstaller@0
       inputs:
@@ -36,9 +36,9 @@ stages:
         jdkArchitectureOption: "x64"
         jdkSourceOption: PreInstalled
         
-- stage: "Run Maven Build"
+- stage: RunMavenBuild
   jobs:
-  - job: "Run Maven Build Work"
+  - job: RunMavenBuildWork
     steps:
     - task: Maven@3
       inputs:
