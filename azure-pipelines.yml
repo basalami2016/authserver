@@ -19,8 +19,7 @@ stages:
 - stage: StartCI
   jobs:
   - job: StartCIWork
-    steps:
-    - script: "Do CI work"
+    steps:   
     - script: echo This runs in the default shell on any machine
     - bash: |
         echo This multiline script always runs in Bash.
