@@ -1,0 +1,67 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+#steps: [ task | script | powershell | pwsh | bash | checkout | download | downloadBuild | getPackage | publish | template | reviewApp ] # Required. A list of steps to run in this job.
+
+trigger:
+- master
+
+#pool:
+  #vmImage: ubuntu-latest
+  
+pool:
+  name: Default
+  demands:
+   - agent.name -equals NiQFlexAgent001 
+
+stages:
+- stage: StartCI
+  jobs:
+  - job: StartCIWork
+    steps:   
+    - script: echo This runs in the default shell on any machine
+    #- bash: |
+        #echo This multiline script always runs in Bash.
+        #echo Even on Windows machines!  
+        
+- stage: InstallJDK
+  jobs:
+  - job: InstallJDKWork
+    steps:
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '17'
+        jdkArchitectureOption: 'x64'
+        #jdkSourceOption: PreInstalled
+        jdkSourceOption: 'LocalDirectory'
+        jdkFile: 'C:\2023AzureDevOpsAgentJDK17\jdk17.zip' #amazon-corretto-17.0.7.7.1-windows-x64-jdk.zip
+        jdkDestinationDirectory: 'C:\2023AzureDevOpsAgentJDK17Install'
+        cleanDestinationDirectory: true
+        
+- stage: ForManualValidation
+  jobs:
+  - job: waitForValidation
+    displayName: Wait for external validation 
+    pool: server
+    timeoutInMinutes: 4320 # job times out in 3 days
+    steps:
+    - task: ManualValidation@0
+      inputs:
+        notifyUsers: |
+          basalami2009@gmail.com
+        instructions: 'Please validate the build configuration and resume'
+        onTimeout: 'resume'
+        
+- stage: RunMavenBuild
+  jobs:
+  - job: RunMavenBuildWork
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'       
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        goals: 'package'
+        
