@@ -39,7 +39,7 @@ stages:
         jdkDestinationDirectory: 'C:\2023AzureDevOpsAgentJDK17Install'
         cleanDestinationDirectory: true
         
-- stage: InstallJDK
+- stage: ForManualValidation
   jobs:
   - job: waitForValidation
     displayName: Wait for external validation 
