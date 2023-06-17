@@ -39,6 +39,20 @@ stages:
         jdkDestinationDirectory: 'C:\2023AzureDevOpsAgentJDK17Install'
         cleanDestinationDirectory: true
         
+- stage: InstallJDK
+  jobs:
+  - job: waitForValidation
+    displayName: Wait for external validation 
+    pool: server
+    timeoutInMinutes: 4320 # job times out in 3 days
+    steps:
+    - task: ManualValidation@0
+      inputs:
+        notifyUsers: |
+          basalami2009@gmail.com
+        instructions: 'Please validate the build configuration and resume'
+        onTimeout: 'resume'
+        
 - stage: RunMavenBuild
   jobs:
   - job: RunMavenBuildWork
@@ -50,6 +64,4 @@ stages:
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
         goals: 'package'
-                   
-        
         
