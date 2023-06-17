@@ -1,21 +1,29 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-#steps: [ task | script | powershell | pwsh | bash | checkout | download | downloadBuild | getPackage | publish | template | reviewApp ] # Required. A list of steps to run in this job.
-
+# specific branch build
 trigger:
-- master
+  branches:
+    include:
+    - niqapps/*
+    exclude:
+    - master
 
-#pool:
-  #vmImage: ubuntu-latest
-  
 pool:
   name: Default
   demands:
    - agent.name -equals NiQFlexAgent001 
 
 stages:
+
+- stage: WorkspaceOps #workspace is a directory used by agent
+  jobs:
+  - job: WorkspaceOpsWork
+    workspace:
+      clean: all  #outputs | resources | all # what to clean up before the job runs     
+    steps:   
+    - script: echo $(Build.ArtifactStagingDirectory)  #artifacts needed for the pipeline or upload artifacts
+    - script: echo $(Build.SourcesDirectory) #application's source code dir
+    - script: echo $(Build.BinariesDirectory) #where tasks write their outputs
+    - script: echo $(Common.TestResultsDirectory) #where tasks upload their test results.
+
 - stage: StartCI
   jobs:
   - job: StartCIWork
@@ -24,10 +32,10 @@ stages:
     #- bash: |
         #echo This multiline script always runs in Bash.
         #echo Even on Windows machines!  
-        
-- stage: InstallJDK
+      
+- stage: JDK17Install
   jobs:
-  - job: InstallJDKWork
+  - job: JDK17InstallWork
     steps:
     - task: JavaToolInstaller@0
       inputs:
@@ -38,30 +46,54 @@ stages:
         jdkFile: 'C:\2023AzureDevOpsAgentJDK17\jdk17.zip' #amazon-corretto-17.0.7.7.1-windows-x64-jdk.zip
         jdkDestinationDirectory: 'C:\2023AzureDevOpsAgentJDK17Install'
         cleanDestinationDirectory: true
-        
-- stage: ForManualValidation
+             
+- stage: CIBuild
   jobs:
-  - job: waitForValidation
-    displayName: Wait for external validation 
-    pool: server
-    timeoutInMinutes: 4320 # job times out in 3 days
+  - job: CIBuildWork
     steps:
-    - task: ManualValidation@0
-      inputs:
-        notifyUsers: |
-          basalami2009@gmail.com
-        instructions: 'Please validate the build configuration and resume'
-        onTimeout: 'resume'
-        
-- stage: RunMavenBuild
+     - script: echo Build Code here
+
+- stage: CITest
   jobs:
-  - job: RunMavenBuildWork
+  - job: CITestWork
     steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m'       
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        goals: 'package'
+    - script: echo Apply Test Task here
+
+- stage: StaticCodeTest
+  jobs:
+  - job: StaticCodeTestWork
+    steps:
+    - script: echo Apply StaticCode Test here
+
+- stage: OSSScanTest
+  jobs:
+  - job: OSSScanTestWork
+    steps:
+    - script: echo Apply StaticCode Test here
+
+- stage: CDcanary
+  jobs: 
+  - deployment: CDcanaryWork
+    displayName: canaryContinuousDelivery
+    workspace:
+      clean: all
+    environment: staging  
+    strategy:
+      # Default deployment strategy, more coming...
+      canary:
+        preDeploy:
+          steps:
+            - script: echo initialize, cleanup, backup, install certs
+        deploy:
+         steps:
+         #- checkout: self 
+         - script: echo my first canary deployment
+        on:
+         failure:        
+          steps:  
+           - script: echo canary deployment failed     
+         success:          
+           #pool: server             
+           steps:
+           - script: echo canary deployment passed  
         
