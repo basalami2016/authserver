@@ -1,0 +1,158 @@
+# specific branch build
+trigger:
+  branches:
+    include:
+    - niqapps/*
+    exclude:
+    - master
+
+pool:
+  name: Default
+  demands:
+   - agent.name -equals NiQFlexAgent001 
+
+stages:
+
+- stage: WorkspaceOps #workspace is a directory used by agent
+  jobs:
+  - job: WorkspaceOpsWork
+    workspace:
+      clean: all  #outputs | resources | all # what to clean up before the job runs     
+    steps:   
+    - script: echo $(Build.ArtifactStagingDirectory)  #artifacts needed for the pipeline or upload artifacts
+    - script: echo $(Build.SourcesDirectory) #application's source code dir
+    - script: echo $(Build.BinariesDirectory) #where tasks write their outputs
+    - script: echo $(Common.TestResultsDirectory) #where tasks upload their test results.
+
+- stage: StartCI
+  jobs:
+  - job: StartCIWork
+    steps:   
+    - script: echo This runs in the default shell on any machine
+    #- bash: |
+        #echo This multiline script always runs in Bash.
+        #echo Even on Windows machines!  
+      
+- stage: JDK17Install
+  jobs:
+  - job: JDK17InstallWork
+    steps:
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '17'
+        jdkArchitectureOption: 'x64'
+        #jdkSourceOption: PreInstalled
+        jdkSourceOption: 'LocalDirectory'
+        jdkFile: 'C:\2023AzureDevOpsAgentJDK17\jdk17.zip' #amazon-corretto-17.0.7.7.1-windows-x64-jdk.zip
+        jdkDestinationDirectory: 'C:\2023AzureDevOpsAgentJDK17Install'
+        cleanDestinationDirectory: true
+             
+- stage: CIBuild
+  jobs:
+  - job: CIBuildWork
+    steps:
+     - script: echo Build Code here
+
+- stage: CITest
+  jobs:
+  - job: CITestWork
+    steps:
+    - script: echo Apply Test Task here
+
+- stage: StaticCodeTest
+  jobs:
+  - job: StaticCodeTestWork
+    steps:
+    - script: echo Apply StaticCode Test here
+
+- stage: OSSScanTest
+  jobs:
+  - job: OSSScanTestWork
+    steps:
+    - script: echo Apply StaticCode Test here
+#https://learn.microsoft.com/en-us/azure/devops/pipelines/process/deployment-jobs?view=azure-devops
+- stage: CDcanary
+  jobs: 
+  - deployment: CDcanaryWork
+    displayName: canaryContinuousDelivery
+    workspace:
+      clean: all
+    environment: staging  
+    strategy:
+      # Default deployment strategy, more coming...
+      canary:
+        preDeploy:
+          steps:
+            - script: echo initialize, cleanup, backup, install certs
+        deploy:
+         steps:
+         #- checkout: self 
+         - script: echo my first canary deployment
+        on:
+         failure:        
+          steps:  
+           - script: echo canary deployment failed     
+         success:          
+           #pool: server             
+           steps:
+           - script: echo canary deployment passed  
+        
+- stage: CDRunOnce
+  jobs: 
+  - deployment: CDRunOnceWork
+    displayName: RunOnceContinuousDelivery
+    workspace:
+      clean: all
+    environment: staging  
+    strategy:
+      # Default deployment strategy, more coming...
+      runOnce:
+        preDeploy:
+          steps:
+            - script: echo initialize, cleanup, backup, install certs
+        deploy:
+         steps:
+         #- checkout: self 
+         - script: echo my first deployment
+        on:
+         failure:       
+          steps:  
+           - script: echo run Once deployment failed     
+         success:          
+           #pool: server             
+           steps:
+           - script: echo run Once deployment passed 
+
+- stage: CDRolling
+  jobs: 
+  - deployment: RolllingCDWork
+    displayName: RollingContinuousDelivery
+    workspace:
+      clean: all
+    environment: staging  
+    strategy:
+      # Default deployment strategy, more coming...
+      rolling:        
+        preDeploy:
+          steps:
+            - script: echo initialize, cleanup, backup, install certs
+        deploy:
+         steps:
+         #- checkout: self 
+         - script: echo my first deployment
+        on:
+         failure:         
+           #pool: server            
+           steps:  
+           - script: echo rolling deployment failed     
+         success:          
+           #pool: server             
+           steps:
+           - script: echo rolloing deployment failed  
+
+
+
+
+
+
+        
