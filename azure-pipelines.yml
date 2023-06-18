@@ -35,3 +35,14 @@ stages:
         #echo This multiline script always runs in Bash.
         #echo Even on Windows machines!  
       
+- stage: CIBuild
+  jobs:
+  - job: CIBuildWork
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'       
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        goals: 'clean cyclonedx:makeBom package'                
