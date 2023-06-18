@@ -33,21 +33,31 @@ stages:
     - task: CmdLine@2      
       inputs:
         workingDirectory: $(Build.SourcesDirectory) #Default to Build.SourcesDirectory if empty
-        script: |
+        script: |          
+          cd $(Build.SourcesDirectory)
+          dir
           echo Write your commands here          
           echo Hello world     
                  
 - stage: CICDBuildArtifact
   jobs:
   - job: CICDBuildArtifactWork
-    steps:
+    steps: 
     - task: Maven@3
       inputs:
         mavenPomFile: 'pom.xml'
         mavenOptions: '-Xmx3072m'       
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        goals: 'clean cyclonedx:makeBom package'                
+        goals: 'clean cyclonedx:makeBom package'    
+
+- stage: MicrosoftSecurity
+  jobs:
+  - job: CICDBuildArtifactWork
+    steps: 
+    - task: MicrosoftSecurityDevOps@1
+      inputs:
+        config: ''               
 
 #https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/publish-build-artifacts-v1?view=azure-pipelines&viewFallbackFrom=azure-devops
 - stage: CICDPublishArtifact
