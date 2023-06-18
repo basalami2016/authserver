@@ -29,10 +29,7 @@ stages:
 - stage: CICDOps
   jobs:
   - job: CICDOpsWork
-    steps:    
-    - task: Delay@1
-      inputs:
-        delayForMinutes: '1'
+    steps:   
     - task: CmdLine@2      
       inputs:
         workingDirectory: $(Build.SourcesDirectory) #Default to Build.SourcesDirectory if empty
