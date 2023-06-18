@@ -44,6 +44,7 @@ stages:
   - job: CICDBuildArtifactWork
     steps: 
     - task: Maven@3
+      displayName: 'Maven v3 Build'
       inputs:
         mavenPomFile: 'pom.xml'
         mavenOptions: '-Xmx3072m'       
@@ -51,24 +52,26 @@ stages:
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
         goals: 'clean cyclonedx:makeBom package'    
 
-- stage: MicrosoftSecurity
+- stage: MicrosoftSecurityDevOps
   jobs:
-  - job: CICDBuildArtifactWork
+  - job: MicrosoftSecurityDevOpsWork
     steps: 
     - task: MicrosoftSecurityDevOps@1
-      inputs:
-        config: ''               
+    displayName: 'Microsoft Security DevOps'
+      #inputs:
+        #config: ''               
 
-#https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/publish-build-artifacts-v1?view=azure-pipelines&viewFallbackFrom=azure-devops
 - stage: CICDPublishArtifact
   jobs:
   - job: CICDPublishArtifactWork
     steps:
     - task: CopyFiles@2
+      displayName: 'Copy Files'
       inputs:
         contents: '_buildOutput/**'
         targetFolder: $(Build.ArtifactStagingDirectory)
     - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build Artifacts'
       inputs:
         pathToPublish: $(Build.ArtifactStagingDirectory)
         artifactName: MyBuildOutputs
