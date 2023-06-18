@@ -35,9 +35,9 @@ stages:
         #echo This multiline script always runs in Bash.
         #echo Even on Windows machines!  
       
-- stage: CIBuildArtifact
+- stage: CICDBuildArtifact
   jobs:
-  - job: CIBuildArtifactWork
+  - job: CICDBuildArtifactWork
     steps:
     - task: Maven@3
       inputs:
@@ -47,9 +47,10 @@ stages:
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
         goals: 'clean cyclonedx:makeBom package'                
 
-- stage: CIPublishArtifact
+#https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/publish-build-artifacts-v1?view=azure-pipelines&viewFallbackFrom=azure-devops
+- stage: CICDPublishArtifact
   jobs:
-  - job: CIPublishArtifactWork
+  - job: CICDPublishArtifactWork
     steps:
     - task: CopyFiles@2
       inputs:
@@ -59,6 +60,6 @@ stages:
       inputs:
         pathToPublish: $(Build.ArtifactStagingDirectory)
         artifactName: MyBuildOutputs
-        TargetPath: \\NIQFLEX001\2023AzureDevOpsBuildArtifact 
-        publishLocation: FilePath #Default value: Container
+        #TargetPath: \\NIQFLEX001\2023AzureDevOpsBuildArtifact 
+        publishLocation: Container
       
