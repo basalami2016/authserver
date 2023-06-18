@@ -2,9 +2,11 @@
 trigger:
   branches:
     include:
-    - niqapps/*
-    exclude:
+    #- niqapps/*
     - master
+    exclude:
+    #- master
+    - niqapps/*
 
 pool:
   name: Default
