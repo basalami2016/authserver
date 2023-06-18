@@ -59,4 +59,6 @@ stages:
       inputs:
         pathToPublish: $(Build.ArtifactStagingDirectory)
         artifactName: MyBuildOutputs
+        TargetPath: \\NIQFLEX001\2023AzureDevOpsBuildArtifact 
+        publishLocation: FilePath #Default value: Container
       
