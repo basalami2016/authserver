@@ -35,9 +35,9 @@ stages:
         #echo This multiline script always runs in Bash.
         #echo Even on Windows machines!  
       
-- stage: CIBuild
+- stage: CIBuildArtifact
   jobs:
-  - job: CIBuildWork
+  - job: CIBuildArtifactWork
     steps:
     - task: Maven@3
       inputs:
@@ -46,3 +46,17 @@ stages:
         publishJUnitResults: true
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
         goals: 'clean cyclonedx:makeBom package'                
+
+- stage: CIPublishArtifact
+  jobs:
+  - job: CIPublishArtifactWork
+    steps:
+    - task: CopyFiles@2
+      inputs:
+        contents: '_buildOutput/**'
+        targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: $(Build.ArtifactStagingDirectory)
+        artifactName: MyBuildOutputs
+      
