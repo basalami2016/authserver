@@ -29,12 +29,17 @@ stages:
 - stage: CICDOps
   jobs:
   - job: CICDOpsWork
-    steps:   
-    - script: echo This runs in the default shell on any machine
-    #- bash: |
-        #echo This multiline script always runs in Bash.
-        #echo Even on Windows machines!  
-      
+    steps:    
+    - task: Delay@1
+      inputs:
+        delayForMinutes: '1'
+    - task: CmdLine@2      
+      inputs:
+        workingDirectory: $(Build.SourcesDirectory) #Default to Build.SourcesDirectory if empty
+        script: |
+          echo Write your commands here          
+          echo Hello world     
+                 
 - stage: CICDBuildArtifact
   jobs:
   - job: CICDBuildArtifactWork
@@ -62,4 +67,20 @@ stages:
         artifactName: MyBuildOutputs
         #TargetPath: \\NIQFLEX001\2023AzureDevOpsBuildArtifact 
         publishLocation: Container
-      
+
+- stage: ScriptTutorial
+  jobs:
+  - job: ScriptTutorialWork
+    steps:
+    - script: date /t
+      displayName: Get the date
+    - script: dir
+      workingDirectory: $(Agent.BuildDirectory)
+      displayName: List contents of a folder
+    - script: |
+        set MYVAR=foo
+        set
+      displayName: Set a variable and then display all
+      env:
+        aVarFromYaml: someValue  
+
