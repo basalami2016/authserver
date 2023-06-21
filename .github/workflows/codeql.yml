@@ -59,9 +59,11 @@ jobs:
 
 
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
-    # If this step fails, then you should remove it and run the build manually (see below)
+    # If this step fails, then you should remove it and run the build manually (see below)   
+    #- name: Autobuild
+    #  uses: github/codeql-action/autobuild@v2
     - if: matrix.language == 'cpp' || matrix.language == 'csharp'
-      name: Autobuild
+      name: niqCustombuild
       uses: github/codeql-action/autobuild@v2
     - if: matrix.language == 'java'
       name: Build Java
