@@ -1,2 +1,2 @@
-# authserver
-Learning Azure DevOps
+# tfado/authserver
+Terraform AzureDevOps GitHub repository integration
