@@ -7,11 +7,15 @@ trigger:
     exclude:
     #- master
     - niqapps/*
-
+/**
 pool:
   name: Default
   demands:
    - agent.name -equals NiQFlexAgent001 
+*/
+
+pool:
+   vmImage: 'ubuntu-latest'
 
 stages:
 
