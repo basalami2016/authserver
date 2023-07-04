@@ -8,6 +8,7 @@ trigger:
     - master    
 
 pool:
+   name: tfado-ubuntu-latest
    vmImage: 'ubuntu-latest'
 
 stages:
