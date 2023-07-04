@@ -25,7 +25,7 @@ stages:
     - script: echo $(Build.SourcesDirectory) #application's source code dir
     - script: echo $(Build.BinariesDirectory) #where tasks write their outputs
     - script: echo $(Common.TestResultsDirectory) #where tasks upload their test results.
-
+/**
 - stage: CICDOps
   jobs:
   - job: CICDOpsWork
@@ -93,4 +93,4 @@ stages:
       displayName: Set a variable and then display all
       env:
         aVarFromYaml: someValue  
-
+*/
